@@ -41,6 +41,8 @@ def update_cloudflare_dns(ip_list, api_token, zone_id, subdomain, domain):
         'Content-Type': 'application/json',
     }
     record_name = domain if subdomain == '@' else f'{subdomain}.{domain}'
+
+    tempCounter = 0
     for ip in ip_list:
         data = {
             "type": "A",
@@ -49,19 +51,25 @@ def update_cloudflare_dns(ip_list, api_token, zone_id, subdomain, domain):
             "ttl": 1,
             "proxied": False
         }
-        response = requests.post(f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records', json=data, headers=headers)
-        if response.status_code == 200:
-            print(f"Add {subdomain}:{ip}")
-        else:
-            print(f"Failed to add A record for IP {ip} to subdomain {subdomain}: {response.status_code} {response.text}")
+        
+        tempCounter += 1
+        if tempCounter < 4:
+            print(f"Prepare to add {record_name}:{ip}")
+            response = requests.post(f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records', json=data, headers=headers)
+            if response.status_code == 200:
+                print(f"Added {record_name}:{ip}")
+            else:
+                print(f"Failed to add A record for IP {ip} to subdomain {subdomain}: {response.status_code} {response.text}")
 
 if __name__ == "__main__":
     api_token = os.getenv('CF_API_TOKEN')
-    
+    # print(f"CF_API_TOKEN: {api_token}")
+
     # 示例URL和子域名对应的IP列表
     subdomain_ip_mapping = {
         #'bestcf': 'https://ipdb.030101.xyz/api/bestcf.txt',
-        'api': 'https://raw.githubusercontent.com/jinwyp/youxuanyuming/refs/heads/main/ip.txt',
+        'cfname1': 'https://raw.githubusercontent.com/jinwyp/youxuanyuming/refs/heads/main/ip.txt',
+        'cfname2': 'https://raw.githubusercontent.com/jinwyp/youxuanyuming/refs/heads/main/ip.txt',
         # 添加更多子域名和对应的IP列表URL
     }
     
@@ -69,13 +77,16 @@ if __name__ == "__main__":
         # 获取Cloudflare域区ID和域名
         zone_id, domain = get_cloudflare_zone(api_token)
         
+        # print(f"Zone ID: {zone_id}, Domain: {domain}")
+
         for subdomain, url in subdomain_ip_mapping.items():
             # 获取IP列表
             ip_list = get_ip_list(url)
+
             # 删除现有的DNS记录
             delete_existing_dns_records(api_token, zone_id, subdomain, domain)
             # 更新Cloudflare DNS记录
             update_cloudflare_dns(ip_list, api_token, zone_id, subdomain, domain)
-            
+
     except Exception as e:
         print(f"Error: {e}")
