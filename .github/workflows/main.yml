@@ -2,7 +2,7 @@ name: Update Cloudflare DNS
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # 每隔三十分钟运行一次
+    - cron: '* */1 * * *'  # 每隔60分钟运行一次
   workflow_dispatch:  # 手动触发
  # push: # 允许提交触发
 
@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'  # 你可以指定需要的 Python 版本
 
