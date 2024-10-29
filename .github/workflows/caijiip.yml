@@ -32,6 +32,8 @@ jobs:
       run: |
         git config --global user.email "jinwyp@gmail.com"
         git config --global user.name "jinwyp"
+        ls -al
+        git status --porcelain
         if [ -n "$(git status --porcelain)" ]; then
           git add ip.txt
           git commit -m "Auto update CF IP list"
