@@ -24,6 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
 
+
     - name: Run bestdomain.py script
       env:
         CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

@@ -24,6 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
         pip install beautifulsoup4
+        pip install pyppeteer
         
     - name: Run collect_ips script
       run: python ${{ github.workspace }}/collect_ips.py

@@ -1,14 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 
-
 import pyppeteer
 import re
 import os
 import asyncio
-
-# 设置 Chromium 路径
-pyppeteer.launcher.CHROME_PATH = 'D:/github/chrome/chrome-win/chrome.exe'
 
 
 # 目标URL列表
@@ -30,6 +26,7 @@ if os.path.exists('ip.txt'):
 
 async def fetch_dynamic_content(url):
     browser = await pyppeteer.launch(
+        executablePath="/usr/bin/google-chrome-stable",  # 替换为 Chromium 可执行文件的路径
         executablePath="D:/github/chrome/chrome-win/chrome.exe",  # 替换为 Chromium 可执行文件的路径
         headless=True,
         args=['--no-sandbox', '--disable-setuid-sandbox']
