@@ -2,7 +2,7 @@ name: Update Cloudflare DNS
 
 on:
   schedule:
-    - cron: '* */12 * * *'  # 每隔12小时运行一次
+    - cron: '* * */2 * *'  # 每隔24小时运行一次
   workflow_dispatch:  # 手动触发
  # push: # 允许提交触发
 
