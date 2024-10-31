@@ -27,7 +27,7 @@ if os.path.exists('ip.txt'):
 async def fetch_dynamic_content(url):
     browser = await pyppeteer.launch(
         executablePath="/usr/bin/google-chrome-stable",  # 替换为 Chromium 可执行文件的路径
-        executablePath="D:/github/chrome/chrome-win/chrome.exe",  # 替换为 Chromium 可执行文件的路径
+        # executablePath="D:/github/chrome/chrome-win/chrome.exe",  # 替换为 Chromium 可执行文件的路径
         headless=True,
         args=['--no-sandbox', '--disable-setuid-sandbox']
     )
