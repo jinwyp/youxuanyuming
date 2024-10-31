@@ -53,7 +53,7 @@ def update_cloudflare_dns(ip_list, api_token, zone_id, subdomain, domain):
         }
         
         tempCounter += 1
-        if tempCounter < 4:
+        if tempCounter < 2:
             print(f"Prepare to add {record_name}:{ip}")
             response = requests.post(f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records', json=data, headers=headers)
             if response.status_code == 200:
