@@ -1,10 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
-
 import pyppeteer
 import re
 import os
+import sys
 import asyncio
+
 
 
 # 目标URL列表
@@ -20,25 +21,54 @@ urls = [
 ip_pattern = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
 # 检查ip.txt文件是否存在,如果存在则删除它
-if os.path.exists('ip.txt'):
-    os.remove('ip.txt')
 
+def cleanup_files():
+    try:
+        if os.path.exists('ip.txt'):
+            os.remove('ip.txt')
+        
+        for index, url in enumerate(urls):
+            if os.path.exists(f'ip_site{index + 1}.txt'):
+                os.remove(f'ip_site{index + 1}.txt')
+            if os.path.exists(f'ip_site{index + 1}_CM.txt'):
+                os.remove(f'ip_site{index + 1}_CM.txt')
+            if os.path.exists(f'ip_site{index + 1}_CU.txt'):
+                os.remove(f'ip_site{index + 1}_CU.txt')
+            if os.path.exists(f'ip_site{index + 1}_CT.txt'):
+                os.remove(f'ip_site{index + 1}_CT.txt')
+            
+    except OSError as e:
+        print(f"Error cleaning up files: {str(e)}")
 
-async def fetch_dynamic_content(url):
-    browser = await pyppeteer.launch(
-        executablePath="/usr/bin/google-chrome-stable",  # 替换为 Chromium 可执行文件的路径
-        # executablePath="D:/github/chrome/chrome-win/chrome.exe",  # 替换为 Chromium 可执行文件的路径
-        headless=True,
-        args=['--no-sandbox', '--disable-setuid-sandbox']
-    )
+async def fetch_dynamic_content(url: str):
+    browser = None
 
-    page = await browser.newPage()
-    await page.goto(url)
-    await asyncio.sleep(5)  # 等待5秒钟
-    content = await page.content()
-    await browser.close()
-    return content
+    chromeExecutablePath="/usr/bin/google-chrome-stable"
+    if sys.platform == "win32":
+        chromeExecutablePath="D:/github/chrome/chrome-win/chrome.exe"
+    elif sys.platform == "darwin":
+        chromeExecutablePath="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    try:
+        browser = await pyppeteer.launch(
+            executablePath=chromeExecutablePath,  # 替换为 Chromium 可执行文件的路径
+            headless=True,
+            args=['--no-sandbox', '--disable-setuid-sandbox']
+        )
 
+        page = await browser.newPage()
+        await page.goto(url)
+        await asyncio.sleep(5)  # 等待5秒钟
+
+        content = await page.content()
+        return content
+    
+    except Exception as e:
+        print(f"Error fetching content from {url}: {str(e)}")
+        return None
+    
+    finally:
+        if browser:
+            await browser.close()
 
 async def main():
     ip_ListAll = []
