@@ -48,16 +48,26 @@ async def fetch_dynamic_content(url: str):
         chromeExecutablePath="D:/github/chrome/chrome-win/chrome.exe"
     elif sys.platform == "darwin":
         chromeExecutablePath="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    
     try:
         browser = await pyppeteer.launch(
             executablePath=chromeExecutablePath,  # 替换为 Chromium 可执行文件的路径
             headless=True,
-            args=['--no-sandbox', '--disable-setuid-sandbox']
+            args=[
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--disable-web-security',
+                '--disable-features=VizDisplayCompositor'
+            ]
         )
 
         page = await browser.newPage()
-        await page.goto(url)
-        await asyncio.sleep(5)  # 等待5秒钟
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+        
+        await page.goto(url, {'waitUntil': 'networkidle2', 'timeout': 60000})
+        await asyncio.sleep(10)  # 等待10秒钟
 
         content = await page.content()
         return content
