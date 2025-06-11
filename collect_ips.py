@@ -13,7 +13,7 @@ urls = [
         'https://stock.hostmonit.com/CloudFlareYes',
         'https://cf.090227.xyz',
         'https://ip.164746.xyz/ipTop10.html', 
-        'https://ipdb.030101.xyz/api/bestcf.txt',
+        'https://ipdb.api.030101.xyz/?type=bestcf&country=true',
         ]
 
 
@@ -87,14 +87,14 @@ async def main():
         
         elements = []
         # 根据网站的不同结构找到包含IP地址的元素
-        if url == 'https://cf.090227.xyz':
+        if url == 'https://stock.hostmonit.com/CloudFlareYes':
             elements = soup.find_all('tr')
-        elif url == 'https://stock.hostmonit.com/CloudFlareYes':
+        elif url == 'https://cf.090227.xyz':
             elements = soup.find_all('tr')
 
         elif url == 'https://ip.164746.xyz/ipTop10.html' :
             elements = html_content.split(',')
-        elif url == 'https://ipdb.030101.xyz/api/bestcf.txt':
+        elif url == 'https://ipdb.api.030101.xyz/?type=bestcf&country=true':
             elements = html_content.split('\n')
         else:
             elements = soup.find_all('li')
@@ -110,6 +110,7 @@ async def main():
         ip_ListCT = []
         for element in elements:
             if hasattr(element, 'get_text'):
+                # element 是 BeautifulSoup 对象，可以使用 get_text() 方法
                 tdsOneRow = element.find_all('td')
                 for tdone in tdsOneRow:
                     td_text = tdone.get_text()
@@ -127,10 +128,11 @@ async def main():
                         ip_ListCT.append(tdsOneRow[1].get_text())
 
             else:
+                # element 是纯字符串，直接进行正则匹配
                 if re.match(ip_pattern, element):
                     ip_ListAll.append(element)
                     ip_ListSingleUrl.append(element)
-                    print(f'IP地址text: {element}')
+                    print(f'IP地址 (纯字符串): {element}')
 
         if len(ip_ListCM) > 0:
             with open(f'ip_site{index + 1}_CM.txt', 'w', encoding='utf-8') as file:
