@@ -22,3 +22,8 @@ python -m pip install --upgrade pip
 pip install requests
 pip install beautifulsoup4
 
+
+
+@REM python collect_ips.py
+@REM set CF_API_TOKEN=xxxxx
+@REM python bestdomain.py
