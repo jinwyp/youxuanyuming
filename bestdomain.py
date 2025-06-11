@@ -16,6 +16,10 @@ def get_cloudflare_zone(api_token):
     zones = response.json().get('result', [])
     if not zones:
         raise Exception("No zones found")
+    else:
+        print(f"Found {len(zones)} zones.")
+        print(f"Zone ID: {zones[0]['id']}, Zone Name: {zones[0]['name']}")
+
     return zones[0]['id'], zones[0]['name']
 
 def delete_existing_dns_records(api_token, zone_id, subdomain, domain):

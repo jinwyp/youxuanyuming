@@ -76,7 +76,7 @@ async def main():
 
         if url == 'https://stock.hostmonit.com/CloudFlareYes':
             html_content = await fetch_dynamic_content(url)
-            # print(html_content)
+            print(html_content)
         else:
             # 发送HTTP请求获取网页内容
             response = requests.get(url)
